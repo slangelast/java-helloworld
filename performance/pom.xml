@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.example.wwinf.starter</groupId>
+	<artifactId>performancetest</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0</version>
+	<name>performancetest</name>
+	<description>Provides JMeter based performance test for a Bluemix app.</description>
+
+	<properties>
+		<jmeter-maven-plugin.version>1.10.1</jmeter-maven-plugin.version>
+		<jmeter-maven-plugin.execution.goal>jmeter</jmeter-maven-plugin.execution.goal>
+		<jmeter-plugins.version>1.4.0</jmeter-plugins.version>
+		<jmeter-analysis-maven-plugin.version>1.0.6</jmeter-analysis-maven-plugin.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.resources.sourceEncoding>UTF-8</project.resources.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>gui</id>
+			<properties>
+				<jmeter-maven-plugin.execution.goal>gui</jmeter-maven-plugin.execution.goal>
+			</properties>
+		</profile>
+	</profiles>
+
+	<build>
+		<plugins>
+			<plugin>
+				<!-- https://github.com/jmeter-maven-plugin -->
+				<groupId>com.lazerycode.jmeter</groupId>
+				<artifactId>jmeter-maven-plugin</artifactId>
+				<version>${jmeter-maven-plugin.version}</version>
+				<configuration>
+					<skipTests>${skipTests}</skipTests>
+					<!-- Don't add timestamp to results file so that results file has a 
+						fixed name. -->
+					<testResultsTimestamp>false</testResultsTimestamp>
+					<!-- Allow JMeter to print progress information while running test plans. -->
+					<suppressJMeterOutput>false</suppressJMeterOutput>
+					<!-- Don't stop maven execution if result file contains errors. This 
+						will be determined by Jenkins. -->
+					<ignoreResultFailures>true</ignoreResultFailures>
+					<propertiesJMeter>
+						<!-- https://wiki.jenkins-ci.org/display/JENKINS/Performance+Plugin -->
+						<jmeter.save.saveservice.label>true</jmeter.save.saveservice.label> <!-- Attribute "lb" in xml / required by Jenkins Performance Plugin / required 
+							by jmeter-analysis-maven-plugin -->
+						<jmeter.save.saveservice.timestamp_format>ms</jmeter.save.saveservice.timestamp_format> <!-- Attribute "ts" in xml / required by Jenkins Performance Plugin / required 
+							by jmeter-analysis-maven-plugin -->
+						<jmeter.save.saveservice.successful>true</jmeter.save.saveservice.successful> <!-- Attribute "s" in xml / required by Jenkins Performance Plugin / required 
+							by jmeter-analysis-maven-plugin -->
+						<jmeter.save.saveservice.bytes>true</jmeter.save.saveservice.bytes> <!-- Attribute "by" in xml / required by Jenkins Performance Plugin / required 
+							by jmeter-analysis-maven-plugin -->
+						<jmeter.save.saveservice.time>true</jmeter.save.saveservice.time> <!-- Attribute "t" in xml / required by Jenkins Performance Plugin / required 
+							by jmeter-analysis-maven-plugin -->
+						<jmeter.save.saveservice.thread_counts>true</jmeter.save.saveservice.thread_counts> <!-- Attributes "na" & "ng" in xml / NOT required by Jenkins Performance 
+							Plugin / "na" required by jmeter-analysis-maven-plugin -->
+						<jmeter.save.saveservice.response_code>true</jmeter.save.saveservice.response_code> <!-- Attribute "rc" in xml / required by Jenkins Performance Plugin / required 
+							by jmeter-analysis-maven-plugin -->
+						<jmeter.save.saveservice.thread_name>true</jmeter.save.saveservice.thread_name> <!-- Attribute "tn" in xml / NOT required by Jenkins Performance Plugin / 
+							required by jmeter-analysis-maven-plugin -->
+						<jmeter.save.saveservice.latency>false</jmeter.save.saveservice.latency> <!-- Attribute "lt" in xml -->
+						<jmeter.save.saveservice.response_message>false</jmeter.save.saveservice.response_message> <!-- Attribute "rm" in xml / textual representation of attribute "s" / numerical 
+							response code lookup: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes -->
+						<jmeter.save.saveservice.data_type>false</jmeter.save.saveservice.data_type> <!-- Attribute "dt" in xml -->
+						<jmeter.save.saveservice.url>true</jmeter.save.saveservice.url> <!-- Element "java.net.URL" in xml -->
+						<jmeter.save.saveservice.response_data.on_error>true</jmeter.save.saveservice.response_data.on_error> <!-- Element "responseData" in xml if sampler was unsuccessful -->
+						<jmeterengine.stopfail.system.exit>true</jmeterengine.stopfail.system.exit>
+						<jmeterengine.force.system.exit>true</jmeterengine.force.system.exit>
+					</propertiesJMeter>
+					<propertiesUser>
+					</propertiesUser>
+					<propertiesSystem>
+					</propertiesSystem>
+					<jmeterPlugins>
+						<plugin>
+							<groupId>kg.apc</groupId>
+							<artifactId>jmeter-plugins-standard</artifactId>
+						</plugin>
+						<plugin>
+							<groupId>kg.apc</groupId>
+							<artifactId>jmeter-plugins-extras</artifactId>
+						</plugin>
+						<plugin>
+							<groupId>kg.apc</groupId>
+							<artifactId>jmeter-plugins-extras-libs</artifactId>
+						</plugin>
+					</jmeterPlugins>
+				</configuration>
+				<dependencies>
+					<!-- http://jmeter-plugins.org/ -->
+					<dependency>
+						<groupId>kg.apc</groupId>
+						<artifactId>jmeter-plugins-standard</artifactId>
+						<version>${jmeter-plugins.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>kg.apc</groupId>
+						<artifactId>jmeter-plugins-extras</artifactId>
+						<version>${jmeter-plugins.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>kg.apc</groupId>
+						<artifactId>jmeter-plugins-extras-libs</artifactId>
+						<version>${jmeter-plugins.version}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>execute-jmeter-tests</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>${jmeter-maven-plugin.execution.goal}</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<!-- https://github.com/afranken/jmeter-analysis-maven-plugin -->
+				<groupId>com.lazerycode.jmeter</groupId>
+				<artifactId>jmeter-analysis-maven-plugin</artifactId>
+				<version>${jmeter-analysis-maven-plugin.version}</version>
+				<configuration>
+					<source>${project.build.directory}/jmeter/results/*.jtl</source>
+					<targetDirectory>${project.build.directory}/jmeter/report</targetDirectory>
+					<detail>true</detail>
+				</configuration>
+				<executions>
+					<execution>
+						<id>create-reports</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>analyze</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
